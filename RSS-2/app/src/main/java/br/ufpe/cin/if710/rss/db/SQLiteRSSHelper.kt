@@ -6,6 +6,7 @@ import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
 import br.ufpe.cin.if710.rss.models.ItemRSS
 
 
@@ -90,6 +91,8 @@ class SQLiteRSSHelper private constructor(
             put(ITEM_UNREAD, true)
         }
 
+        Log.d("SERVICE", "Inserting $title")
+
         return db.insert(DATABASE_TABLE, null, values)
     }
 
@@ -101,8 +104,8 @@ class SQLiteRSSHelper private constructor(
         val projection = arrayOf(ITEM_TITLE, ITEM_DATE, ITEM_DESC, ITEM_LINK)
         val selection = "$ITEM_LINK = ?"
         val selectionArgs = arrayOf(link)
-        val cursor = db.query(DATABASE_TABLE, projection, selection, selectionArgs, null,
-                null, null)
+        val cursor = db.query(DATABASE_TABLE, projection, selection, selectionArgs,
+                null,null, null)
 
         with(cursor) {
             if (moveToNext()) {

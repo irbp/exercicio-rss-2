@@ -4,12 +4,39 @@ import br.ufpe.cin.if710.rss.models.ItemRSS
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import org.xmlpull.v1.XmlPullParserFactory
+import java.io.ByteArrayOutputStream
 
 import java.io.IOException
+import java.io.InputStream
 import java.io.StringReader
+import java.net.HttpURLConnection
+import java.net.URL
 import java.util.ArrayList
 
 object ParserRSS {
+
+    @Throws(IOException::class)
+    fun getRssFeed(feed: String): String {
+        var inputStream: InputStream? = null
+        val rssFeed: String
+        try {
+            val url = URL(feed)
+            val conn = url.openConnection() as HttpURLConnection
+            inputStream = conn.inputStream
+            val out = ByteArrayOutputStream()
+            val buffer = ByteArray(1024)
+            var count = inputStream.read(buffer)
+            while (count != -1) {
+                out.write(buffer, 0, count)
+                count = inputStream.read(buffer)
+            }
+            val response = out.toByteArray()
+            rssFeed = String(response, charset("UTF-8"))
+        } finally {
+            inputStream?.close()
+        }
+        return rssFeed
+    }
 
     //Se quiser, teste primeiro com o parser simples para exibir lista de titulos - sem informacao de link
     @Throws(XmlPullParserException::class, IOException::class)

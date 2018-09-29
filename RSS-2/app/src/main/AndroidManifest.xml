@@ -18,7 +18,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.SettingsActivity"></activity>
+        <activity android:name=".activities.SettingsActivity" />
+
+        <service
+            android:name=".services.RSSService"
+            android:exported="false"></service>
     </application>
 
 </manifest>
