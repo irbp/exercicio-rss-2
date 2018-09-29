@@ -9,8 +9,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import br.ufpe.cin.if710.rss.R
+import br.ufpe.cin.if710.rss.db.SQLiteRSSHelper
 import br.ufpe.cin.if710.rss.models.ItemRSS
 import kotlinx.android.synthetic.main.itemlista.view.*
+import org.jetbrains.anko.doAsync
 
 class RssListAdapter(private val rssList: List<ItemRSS>,
                      private val context: Context) : Adapter<RssListAdapter.ViewHolder>() {
@@ -42,9 +44,16 @@ class RssListAdapter(private val rssList: List<ItemRSS>,
 
             // clicando no título será feito um intent implícito para abrir o link no browser
             title.setOnClickListener {
+                val db = SQLiteRSSHelper.getInstance(context)
+                // marcando o item como lido no bd
+                doAsync {
+                    db.markAsRead(itemRss.link)
+                }
+
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(itemRss.link))
                 intent.addCategory(Intent.CATEGORY_BROWSABLE)
                 intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY
+
                 context.startActivity(intent)
             }
         }
