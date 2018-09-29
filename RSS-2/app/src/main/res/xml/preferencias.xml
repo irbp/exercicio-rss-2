@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:dialogMessage="Enter RSS Url"
+        android:dialogTitle="Change RSS Url"
+        android:key="rssfeed"
+        android:negativeButtonText="Cancel"
+        android:positiveButtonText="Save"
+        android:defaultValue="@string/rssfeed"
+        android:title="RSS Url"
+        >
+    </EditTextPreference>
+
+</PreferenceScreen>
