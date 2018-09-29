@@ -67,15 +67,12 @@ class MainActivity : Activity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.settings -> {
-                val intent= Intent(this@MainActivity, SettingsActivity::class.java)
+                val intent= Intent(this, SettingsActivity::class.java)
                 startActivity(intent)
+                return true
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    private fun Any.toast(context: Context, duration: Int = Toast.LENGTH_SHORT) {
-        Toast.makeText(context, this.toString(), duration).show()
     }
 
     private fun refreshContent() {
