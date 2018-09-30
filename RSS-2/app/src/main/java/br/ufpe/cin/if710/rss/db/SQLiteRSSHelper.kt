@@ -146,4 +146,21 @@ class SQLiteRSSHelper private constructor(
 
         return count > 0
     }
+
+    fun getAllUnreadItems(): List<ItemRSS> {
+        val itemsRss: MutableList<ItemRSS> = ArrayList()
+
+        with(items) {
+            while (moveToNext()) {
+                val title = getString(getColumnIndexOrThrow(ITEM_TITLE))
+                val pubDate = getString(getColumnIndexOrThrow(ITEM_DATE))
+                val description = getString(getColumnIndexOrThrow(ITEM_DESC))
+                val url = getString(getColumnIndexOrThrow(ITEM_LINK))
+
+                itemsRss.add(ItemRSS(title, url, pubDate, description))
+            }
+        }
+
+        return itemsRss
+    }
 }

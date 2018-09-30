@@ -2,19 +2,21 @@ package br.ufpe.cin.if710.rss.activities
 
 import android.app.Activity
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import br.ufpe.cin.if710.rss.R
-import br.ufpe.cin.if710.rss.models.ItemRSS
+import br.ufpe.cin.if710.rss.services.DynamicBroadcastReceiver
 import br.ufpe.cin.if710.rss.services.RSSService
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : Activity() {
 
     private lateinit var RSS_FEED: String
+    private lateinit var dynamicBroadcastReceiver: DynamicBroadcastReceiver
 
     //OUTROS LINKS PARA TESTAR...
     //http://rss.cnn.com/rss/edition.rss
@@ -29,14 +31,24 @@ class MainActivity : Activity() {
         val layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL,
                 false)
         conteudoRSS.layoutManager = layoutManager
-
         swipe_layout.setOnRefreshListener { refreshContent() }
+
+        dynamicBroadcastReceiver = DynamicBroadcastReceiver(conteudoRSS)
     }
 
     override fun onStart() {
         super.onStart()
 
         refreshContent()
+
+        val intentFilter = IntentFilter("$packageName.RSS_FEED")
+        registerReceiver(dynamicBroadcastReceiver, intentFilter)
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        unregisterReceiver(dynamicBroadcastReceiver)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -58,7 +70,6 @@ class MainActivity : Activity() {
     private fun refreshContent() {
         // obtendo a url do rss a partir da shared preference rssfeed
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
-        val itemsRss: MutableList<ItemRSS> = ArrayList()
         RSS_FEED = sharedPref.getString("rssfeed", getString(R.string.rssfeed))
 
         val rssServiceIntent = Intent(this, RSSService::class.java)
