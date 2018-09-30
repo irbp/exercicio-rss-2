@@ -10,19 +10,17 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.support.v4.app.NotificationCompat
-import android.support.v4.app.NotificationManagerCompat
-import android.util.Log
 import br.ufpe.cin.if710.rss.R
 import br.ufpe.cin.if710.rss.activities.MainActivity
 
 class StaticBroadcastReceiver : BroadcastReceiver() {
 
-    companion object {
-        const val CHANNEL_ID = "12345"
-        const val ID = 12345
-    }
+    companion object { const val CHANNEL_ID = "12345" }
 
     override fun onReceive(context: Context, intent: Intent) {
+        // Se a aplicação estiver em segundo plano uma notificação será exibida
+        // Ao clicar na notificação o usuário é direcionado à MainActivity exibindo o
+        // feed das notícias não lidas
         if (!MainActivity.isActivityVisible) {
             val mIntent = Intent(context, MainActivity::class.java)
             val pendingIntent = PendingIntent.getActivity(context, 0, mIntent,

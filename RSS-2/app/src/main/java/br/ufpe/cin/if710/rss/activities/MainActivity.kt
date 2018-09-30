@@ -5,9 +5,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import br.ufpe.cin.if710.rss.R
@@ -36,6 +34,7 @@ class MainActivity : Activity() {
                 false)
         conteudoRSS.layoutManager = layoutManager
 
+        // Instanciando o broadcast dinâmico
         dynamicBroadcastReceiver = DynamicBroadcastReceiver(conteudoRSS)
     }
 
@@ -43,6 +42,7 @@ class MainActivity : Activity() {
         super.onResume()
         isActivityVisible = true
 
+        // Registrando um broadcast receiver dinâmico
         val intentFilter = IntentFilter("$packageName.RSS_FEED")
         registerReceiver(dynamicBroadcastReceiver, intentFilter)
 
@@ -53,16 +53,20 @@ class MainActivity : Activity() {
         super.onPause()
         isActivityVisible = false
 
+        // Desregistrando o receiver dinâmico
         unregisterReceiver(dynamicBroadcastReceiver)
     }
 
+    // Infla as opções do menu da MainActivity
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
+    // Executa uma ação dependendo do menu escolhido
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
+            // Muda para a acitvity que contem um PreferenceFragment
             R.id.settings -> {
                 val intent= Intent(this, SettingsActivity::class.java)
                 startActivity(intent)
@@ -76,8 +80,8 @@ class MainActivity : Activity() {
         // obtendo a url do rss a partir da shared preference rssfeed
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
         RSS_FEED = sharedPref.getString("rssfeed", getString(R.string.rssfeed))
-        Log.d("SERVICE", RSS_FEED)
 
+        // Inicia um IntentService para fazer o download e o parsing do feed rss
         val rssServiceIntent = Intent(this, RSSService::class.java)
         rssServiceIntent.putExtra("rssUrl", RSS_FEED)
         startService(rssServiceIntent)

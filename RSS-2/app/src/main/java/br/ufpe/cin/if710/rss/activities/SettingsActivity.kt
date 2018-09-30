@@ -11,7 +11,9 @@ class SettingsActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
+        // Modificando o nome da ActionBar
         actionBar.title = "Settings"
+        // Exibindo o PreferenceFragment
         fragmentManager.beginTransaction()
                 .replace(android.R.id.content, SettingsFragment())
                 .commit()

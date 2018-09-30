@@ -156,6 +156,7 @@ class SQLiteRSSHelper private constructor(
         return count > 0
     }
 
+    // Retorna todos os itens que ainda não foram lidos e retorna e forma de lista
     fun getAllUnreadItems(): List<ItemRSS> {
         val itemsRss: MutableList<ItemRSS> = ArrayList()
 

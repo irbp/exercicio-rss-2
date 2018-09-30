@@ -14,6 +14,7 @@ class DynamicBroadcastReceiver(val conteudoRSS: RecyclerView) : BroadcastReceive
     override fun onReceive(context: Context, intent: Intent?) {
         val db = SQLiteRSSHelper.getInstance(context)
 
+        // Obtém do bd os items que ainda não foram clicados e exibe utilizando o adapter
         doAsync {
             val itemsRss = db.getAllUnreadItems()
             uiThread { conteudoRSS.adapter = RssListAdapter(itemsRss, context) }
