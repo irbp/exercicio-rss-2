@@ -54,13 +54,13 @@ class SQLiteRSSHelper private constructor(
                 ITEM_UNREAD + " boolean not null);"
     }
 
-    private val items: Cursor
+    val items: Cursor
         @Throws(SQLException::class)
         get() {
             val db = readableDatabase
             val projection = columns
             val selection = "$ITEM_UNREAD = ?"
-            val selectionArgs = arrayOf("true")
+            val selectionArgs = arrayOf("1")
 
             return db.query(DATABASE_TABLE, projection, selection, selectionArgs, null,
                     null, null)

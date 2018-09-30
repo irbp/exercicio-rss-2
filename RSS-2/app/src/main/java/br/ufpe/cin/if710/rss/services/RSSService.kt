@@ -2,7 +2,6 @@ package br.ufpe.cin.if710.rss.services
 
 import android.app.IntentService
 import android.content.Intent
-import android.util.Log
 import br.ufpe.cin.if710.rss.db.SQLiteRSSHelper
 import br.ufpe.cin.if710.rss.models.ItemRSS
 import br.ufpe.cin.if710.rss.utils.ParserRSS
@@ -17,9 +16,11 @@ class RSSService : IntentService("RSSService") {
         val rssUrl = intent?.getStringExtra("rssUrl")
         val feedXML = ParserRSS.getRssFeed(rssUrl!!)
         val itemsRss = ParserRSS.parse(feedXML)
-        Log.d("SERVICE", rssUrl)
-        Log.d("SERVICE", itemsRss.toString())
         saveInDatabase(itemsRss)
+        Intent().also {
+            it.action = "$packageName.RSS_FEED"
+            sendBroadcast(it)
+        }
     }
 
     private fun saveInDatabase(itemsRss: List<ItemRSS>) {

@@ -7,19 +7,10 @@ import android.preference.PreferenceManager
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
-import br.ufpe.cin.if710.rss.utils.ParserRSS
 import br.ufpe.cin.if710.rss.R
-import br.ufpe.cin.if710.rss.adapters.RssListAdapter
+import br.ufpe.cin.if710.rss.models.ItemRSS
 import br.ufpe.cin.if710.rss.services.RSSService
 import kotlinx.android.synthetic.main.activity_main.*
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
-
-import java.io.ByteArrayOutputStream
-import java.io.IOException
-import java.io.InputStream
-import java.net.HttpURLConnection
-import java.net.URL
 
 class MainActivity : Activity() {
 
@@ -67,6 +58,7 @@ class MainActivity : Activity() {
     private fun refreshContent() {
         // obtendo a url do rss a partir da shared preference rssfeed
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
+        val itemsRss: MutableList<ItemRSS> = ArrayList()
         RSS_FEED = sharedPref.getString("rssfeed", getString(R.string.rssfeed))
 
         val rssServiceIntent = Intent(this, RSSService::class.java)
