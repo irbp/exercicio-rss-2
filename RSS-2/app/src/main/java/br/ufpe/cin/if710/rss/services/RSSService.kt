@@ -3,6 +3,7 @@ package br.ufpe.cin.if710.rss.services
 import android.app.IntentService
 import android.content.Intent
 import android.os.SystemClock
+import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import br.ufpe.cin.if710.rss.db.SQLiteRSSHelper
 import br.ufpe.cin.if710.rss.models.ItemRSS
@@ -19,8 +20,8 @@ class RSSService : IntentService("RSSService") {
         saveInDatabase(itemsRss, rssUrl)
 
         sendBroadcast(Intent("$packageName.RSS_FEED"))
-        SystemClock.sleep(5000L)
-        if (notify) sendBroadcast(Intent("$packageName.FEED_NOTIFICATION"))
+        if (notify) sendBroadcast(Intent(this,
+                StaticBroadcastReceiver::class.java))
     }
 
     private fun saveInDatabase(itemsRss: List<ItemRSS>, rssUrl: String) {

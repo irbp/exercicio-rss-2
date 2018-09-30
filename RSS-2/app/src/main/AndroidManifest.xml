@@ -29,9 +29,6 @@
             android:name=".services.StaticBroadcastReceiver"
             android:enabled="true"
             android:exported="true">
-            <intent-filter>
-                <action android:name="br.ufpe.cin.if710.rss.FEED_NOTIFICATION" />
-            </intent-filter>
         </receiver>
     </application>
 
