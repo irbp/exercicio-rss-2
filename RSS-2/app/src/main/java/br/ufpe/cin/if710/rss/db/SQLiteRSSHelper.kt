@@ -11,15 +11,15 @@ import br.ufpe.cin.if710.rss.models.ItemRSS
 
 
 class SQLiteRSSHelper private constructor(
-        private var c: Context) : SQLiteOpenHelper(c, DATABASE_NAME, null, DB_VERSION) {
+        c: Context) : SQLiteOpenHelper(c, DATABASE_NAME, null, DB_VERSION) {
 
     companion object {
         //Nome do Banco de Dados
-        private val DATABASE_NAME = "rss"
+        private const val DATABASE_NAME = "rss"
         //Nome da tabela do Banco a ser usada
-        val DATABASE_TABLE = "items"
+        const val DATABASE_TABLE = "items"
         //Versão atual do banco
-        private val DB_VERSION = 1
+        private const val DB_VERSION = 1
 
         private var db: SQLiteRSSHelper? = null
 
@@ -33,16 +33,16 @@ class SQLiteRSSHelper private constructor(
         }
 
         //Definindo constantes que representam os campos do banco de dados
-        val ITEM_ROWID = RssProviderContract._ID
+        private val ITEM_ROWID = RssProviderContract._ID
         val ITEM_TITLE = RssProviderContract.TITLE
         val ITEM_DATE = RssProviderContract.DATE
         val ITEM_DESC = RssProviderContract.DESCRIPTION
         val ITEM_LINK = RssProviderContract.LINK
         val ITEM_UNREAD = RssProviderContract.UNREAD
+        val ITEM_RSSURL = RssProviderContract.RSS_URL
 
         //Definindo constante que representa um array com todos os campos
-        val columns = arrayOf<String>(
-                ITEM_ROWID,ITEM_TITLE, ITEM_DATE, ITEM_DESC, ITEM_LINK, ITEM_UNREAD)
+        val columns = arrayOf(ITEM_ROWID,ITEM_TITLE, ITEM_DATE, ITEM_DESC, ITEM_LINK, ITEM_UNREAD)
 
         //Definindo constante que representa o comando de criação da tabela no banco de dados
         private val CREATE_DB_COMMAND = "CREATE TABLE " + DATABASE_TABLE + " (" +
@@ -51,16 +51,19 @@ class SQLiteRSSHelper private constructor(
                 ITEM_DATE + " text not null, " +
                 ITEM_DESC + " text not null, " +
                 ITEM_LINK + " text not null, " +
-                ITEM_UNREAD + " boolean not null);"
+                ITEM_UNREAD + " boolean not null, " +
+                ITEM_RSSURL + " text not null);"
+
+        lateinit var currentRssUrl: String
     }
 
-    val items: Cursor
+    private val items: Cursor
         @Throws(SQLException::class)
         get() {
             val db = readableDatabase
             val projection = columns
-            val selection = "$ITEM_UNREAD = ?"
-            val selectionArgs = arrayOf("1")
+            val selection = "$ITEM_UNREAD = ? AND $ITEM_RSSURL = ?"
+            val selectionArgs = arrayOf("1", currentRssUrl)
 
             return db.query(DATABASE_TABLE, projection, selection, selectionArgs, null,
                     null, null)
@@ -76,12 +79,17 @@ class SQLiteRSSHelper private constructor(
         throw RuntimeException("nao se aplica")
     }
 
-    fun insertItem(item: ItemRSS): Long {
-        return insertItem(item.title, item.pubDate, item.description, item.link)
+    fun insertItem(item: ItemRSS, rssUrl: String): Long {
+        return insertItem(item.title, item.pubDate, item.description, item.link, rssUrl)
     }
 
     // Inserindo um novo item na tabela e marcando ele como não lido
-    fun insertItem(title: String, pubDate: String, description: String, link: String): Long {
+    private fun insertItem(title: String,
+                           pubDate: String,
+                           description: String,
+                           link: String,
+                           rssUrl: String): Long {
+
         val db = writableDatabase
         val values = ContentValues().apply {
             put(ITEM_TITLE, title)
@@ -89,6 +97,7 @@ class SQLiteRSSHelper private constructor(
             put(ITEM_DESC, description)
             put(ITEM_LINK, link)
             put(ITEM_UNREAD, true)
+            put(ITEM_RSSURL, rssUrl)
         }
 
         Log.d("SERVICE", "Inserting $title")

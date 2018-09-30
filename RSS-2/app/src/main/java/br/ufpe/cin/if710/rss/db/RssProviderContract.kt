@@ -14,6 +14,7 @@ object RssProviderContract {
     val LINK = "guid"
     val UNREAD = "unread"
     val ITEMS_TABLE = "items"
+    val RSS_URL = "rssurl"
 
 
     val ALL_COLUMNS = arrayOf(_ID, TITLE, DATE, DESCRIPTION, LINK, UNREAD)

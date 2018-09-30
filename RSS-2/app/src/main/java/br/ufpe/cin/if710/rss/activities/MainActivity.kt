@@ -6,6 +6,7 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import br.ufpe.cin.if710.rss.R
@@ -17,6 +18,8 @@ class MainActivity : Activity() {
 
     private lateinit var RSS_FEED: String
     private lateinit var dynamicBroadcastReceiver: DynamicBroadcastReceiver
+
+    companion object { var isActivityVisible = false }
 
     //OUTROS LINKS PARA TESTAR...
     //http://rss.cnn.com/rss/edition.rss
@@ -31,22 +34,23 @@ class MainActivity : Activity() {
         val layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL,
                 false)
         conteudoRSS.layoutManager = layoutManager
-        swipe_layout.setOnRefreshListener { refreshContent() }
 
         dynamicBroadcastReceiver = DynamicBroadcastReceiver(conteudoRSS)
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        refreshContent()
+    override fun onResume() {
+        super.onResume()
+        isActivityVisible = true
 
         val intentFilter = IntentFilter("$packageName.RSS_FEED")
         registerReceiver(dynamicBroadcastReceiver, intentFilter)
+
+        refreshContent()
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onPause() {
+        super.onPause()
+        isActivityVisible = false
 
         unregisterReceiver(dynamicBroadcastReceiver)
     }
@@ -71,6 +75,7 @@ class MainActivity : Activity() {
         // obtendo a url do rss a partir da shared preference rssfeed
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
         RSS_FEED = sharedPref.getString("rssfeed", getString(R.string.rssfeed))
+        Log.d("SERVICE", RSS_FEED)
 
         val rssServiceIntent = Intent(this, RSSService::class.java)
         rssServiceIntent.putExtra("rssUrl", RSS_FEED)
